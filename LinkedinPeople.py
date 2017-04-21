@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import urllib, httplib, re, sys, getpass, json
+import urllib, httplib, re, sys, getpass, json, os
 #from termcolor import colored #except ImportError
 import argparse
 
@@ -10,6 +10,10 @@ port = 443
 conn = httplib.HTTPSConnection(url,port)
 
 # output files
+if not os.path.exists("output"):
+	os.mkdir("output")
+	os.mkdir("output/pdf/")
+	os.mkdir("output/dict/")
 pdf_directory = "output/pdf/"
 dict_directory = "output/dict/"
 out_all = open(dict_directory+"all.txt","w")
@@ -201,4 +205,3 @@ except KeyboardInterrupt: # if ctrl-c
 	sys.exit()
 except Exception as e:
 	print e
-
