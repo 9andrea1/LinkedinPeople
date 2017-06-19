@@ -37,13 +37,12 @@ def getcsrf():
 	cookies = "lang="+lang+"; JSESSIONID="+JSESSIONID+"; bcookie="+bcookie+"; bscookie="+bscookie+";"
  	resp = risposta.read()
 	loginCsrfParam = re.search(r'loginCsrfParam-login" type="hidden" value="(.*?)"',resp).group(1)
-	sourceAlias = re.search(r'sourceAlias-login" type="hidden" value="(.*?)"',resp).group(1)
-	return loginCsrfParam, sourceAlias, cookies
+	return loginCsrfParam, cookies
 
 
 # return login session cookie
-def login(loginCsrfParam, sourceAlias, cookies, email, password):
-	data = "session_key="+email+"&session_password="+password+"&isJsEnabled=false&loginCsrfParam="+loginCsrfParam+"&sourceAlias="+sourceAlias+"\""
+def login(loginCsrfParam, cookies, email, password):
+	data = "session_key="+email+"&session_password="+password+"&isJsEnabled=false&loginCsrfParam="+loginCsrfParam
 	conn.request("POST","/uas/login-submit", data, headers={"Cookie":"%s"%cookies, "Content-Type":"application/x-www-form-urlencoded"})
 	risposta = conn.getresponse()
 	resp = risposta.read()
@@ -183,10 +182,10 @@ try:
 		password = urllib.quote_plus( getpass.getpass() ) # url encode special chars
 
 	# get login cookie
-	loginCsrfParam, sourceAlias, tmp_cookies = getcsrf()
-	login_cookies = login(loginCsrfParam, sourceAlias, tmp_cookies, email, password)
+	loginCsrfParam, tmp_cookies = getcsrf()
+	login_cookies = login(loginCsrfParam, tmp_cookies, email, password)
 	cookie = login_cookies
-	Csrf_Token = re.search(r'JSESSIONID="(.*?)";',cookie).group(1)
+	Csrf_Token = re.search(r'JSESSIONID=(.*?);',cookie).group(1)
 	
 	# check search input
 	if args.search is not None:
