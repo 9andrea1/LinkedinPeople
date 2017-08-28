@@ -1,7 +1,9 @@
 # LinkedinPeople 
 Fetch people names and roles starting from company name or company id.
-Use hunter.io search to get company email pattern and create the resulting table
-Optionally generate company usernames dictionary files and csv file 
+
+Use hunter.io search to get company email pattern and create the resulting table.
+
+Optionally generate company usernames dictionary files and csv file.
 
 ## Usage
 ```shell
