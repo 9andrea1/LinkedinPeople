@@ -164,7 +164,7 @@ def processResults(resp,t):
 			except:
 				identifier = ""	
 			email = makeEmail(name, surname)
-			t.add_row([name,surname,occupation,email])
+			t.add_row([unicode(name,errors='ignore'), unicode(surname,errors='ignore'), unicode(occupation,errors='ignore'), unicode(email,errors='ignore')])
 			if args.dict:
 				saveDictionaries(name.lower(), surname.lower())
 			if args.csv:
