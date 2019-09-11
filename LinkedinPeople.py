@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import urllib, httplib, re, getpass, json, os
 from prettytable import PrettyTable
+from tqdm import tqdm
 #from termcolor import colored #except ImportError
 import argparse
 
@@ -39,7 +40,7 @@ def getcsrf():
 	bscookie = re.search(r'bscookie=(.*?);',set_cookies).group(1)
 	cookies = "lang="+lang+"; JSESSIONID="+JSESSIONID+"; bcookie="+bcookie+"; bscookie="+bscookie+";"
  	resp = risposta.read()
-	loginCsrfParam = re.search(r'loginCsrfParam-login" type="hidden" value="(.*?)"',resp).group(1)
+	loginCsrfParam = re.search(r'type="hidden"\s+name="loginCsrfParam"\s+value="(.*?)"',resp).group(1)
 	return loginCsrfParam, cookies
 
 
@@ -164,26 +165,28 @@ def processResults(resp,t):
 			except:
 				identifier = ""	
 			email = makeEmail(name, surname)
+
 			t.add_row([unicode(name,errors='ignore'), unicode(surname,errors='ignore'), unicode(occupation,errors='ignore'), unicode(email,errors='ignore')])
 			if args.dict:
 				saveDictionaries(name.lower(), surname.lower())
 			if args.csv:
 				saveCSV(name, surname, occupation, email)	
-		else:
-			print "[-] Out of network result found" 
-		
+		#else:
+			#print "[-] Out of network result found" 
+
 
 # search request (10 result each page)
 def getResults():
 	try:
 		t = PrettyTable(['NAME', 'SURNAME', 'OCCUPATION', 'EMAIL'])
-		for i in range(pages):
+		for i in tqdm(range(pages)):
 			url = "/voyager/api/search/cluster?count=10&guides=List(v-%3EPEOPLE,facetCurrentCompany-%3E"+str(ID)+")&origin=OTHER&q=guided&start="+str(i*10)
 			#"/voyager/api/search/cluster?count=40&guides=List()&keywords="+queryf+"&origin=OTHER&q=guided&start="+str(i*10)
 			conn.request("GET", url, headers={'Cookie':cookie,'Csrf-Token':Csrf_Token,'X-RestLi-Protocol-Version':'2.0.0'})
 			risposta = conn.getresponse()
 			resp = risposta.read()
 			processResults(resp,t)
+		print ""		
 		print t
 		print ""
 	except IndexError as e:
