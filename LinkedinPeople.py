@@ -40,7 +40,7 @@ def getcsrf():
 	bscookie = re.search(r'bscookie=(.*?);',set_cookies).group(1)
 	cookies = "lang="+lang+"; JSESSIONID="+JSESSIONID+"; bcookie="+bcookie+"; bscookie="+bscookie+";"
  	resp = risposta.read()
-	loginCsrfParam = re.search(r'type="hidden"\s+name="loginCsrfParam"\s+value="(.*?)"',resp).group(1)
+	loginCsrfParam = re.search(r'name="loginCsrfParam"\s+value="(.*?)"\stype="hidden"',resp).group(1)
 	return loginCsrfParam, cookies
 
 
